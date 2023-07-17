@@ -7,13 +7,13 @@
  * Повертаємо - Новий об'єкт з об'єднаними властивостями.
  */
 function customAssign(...objects) {
-  if (!objects > 1) {
+  if (objects.length < 2) {
     return `Помилка: Має бути передано принаймні два об'єкти.`;
   }
-  const newObject = Object.assign(...objects);
-  for (const num in { ...objects }) {
-    if (typeof num === "number") {
-      newObject.toString();
+  const newObject = Object.assign({}, ...objects);
+  for (const key in newObject) {
+    if (typeof newObject[key] === "number") {
+      newObject[key] = String(newObject[key]);
     }
   }
   return newObject;
@@ -72,13 +72,14 @@ function customObjectFromEntries(entries) {
   if (!Array.isArray(entries)) {
     return "Вхідний параметр має бути масивом";
   }
-  const customObject = entries.map((key, value) => {
+  const customObject = entries.map(([key, value]) => {
     if (typeof key === "number") {
-      return customObject;
+      value = String(key);
     }
-    const obj = Object.fromEntries(entries);
-    return obj;
+    return [key, value];
   });
+  const obj = Object.fromEntries(customObject);
+  return obj;
 
   // Перевірка, чи вхідний аргумент є масивом,якщо ні повертаєм "Помилка: Вхідний аргумент має бути масивом."
   // Використання методу `map` для обробки значень властивостей
@@ -341,16 +342,16 @@ console.log(getObjectValuesSum({ a: 1, b: 2, c: 3 })); // Виведе 6
  */
 function convertArrayToObj(arr) {
   if (!Array.isArray(arr)) {
-    return [];
+    return {};
   }
-  let convert = [];
+  let convert = {};
   for (let i = 0; i <= arr.length; i++) {
-    let [key, value] = arr;
-    if (convert === key) {
+    let [key, value] = arr[i];
+    if (convert.hasOwnProperty(key)) {
       console.log(`У масиві є дубльований ключ: ${key}`);
     }
-    convert = [key, value];
-    return Object.fromEntries(convert);
+    convert[key] = value;
+    return Object.fromEntries(arr);
   }
   // Перевіряємо, чи вхідний параметр є масивом, якщо ні, повертаємо пустий об'єкт
   // Створюємо пустий об'єкт який записуємо в змінну
